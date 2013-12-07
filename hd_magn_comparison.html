@@ -1,13 +1,24 @@
 <h1>Magnitude Comparison</h1>
-<div id="magnitude-wrap">
+<noscript>Your browser doesn't have JavaScript turned on!</noscript>
+<div id="outdatedMessage">
+Your browser is out of date. It may not properly display the following script.
+Update your browser: <a href="">Google Chrome</a> <a href="">Mozilla Firefox</a> <a href="">Internet Explorer 10</a> 
 </div>
+<div id="magnitude-wrap"></div>
 <style>
+#outdatedMessage{
+display:none;
+color:black;
+background-color:#FFFF88;
+border:solid 1px #999900;
+}
 #magnitude-wrap{
-	position:absolute;width:1000px;height:500px;
+	position:absolute;width:800px;height:500px;
 	overflow:hidden;
 	border:solid 1px #000000;
+	background-color:#999999;
 }
-#magnitude-wrap img{
+.imgwrap{
 	position:absolute;top:0px;left:0px;
 	transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
 	-webkit-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
@@ -17,8 +28,45 @@
 	filter:alpha(opacity=50);
 	border:solid 1px #000000;
 }
+.imgwrap img{
+	width:100%;height:100%;
+}
+
+/*Begin derived code: http://www.cssbakery.com/2009/03/captioning-image-in-blogger.html*/
+.imgwrap { 
+margin: 0; padding: 0;
+font: .75em/1.75em Verdana, sans-serif;
+}
+.imgwrap .transbox {
+margin: 0; padding: 0px;
+background-color: #9999CC;
+opacity:0.7;  filter:alpha(opacity=70);
+position: absolute; bottom: 0; left: 0;
+width: 100%;
+height:3.5em;
+
+position:absolute;bottom:0px;left:0px;
+
+transition:opacity 1s,height 1s;
+-webkit-transition:opacity 1s,height 1s;
+-moz-transition:opacity 1s,height 1s;
+-o-transition:opacity 1s,height 1s;
+}
+.imgwrap .caption {
+margin: 0; padding: 10px;
+color: black;
+position: absolute; bottom: 0; left: 0;
+
+transition:opacity 1s,font-size 1s;
+-webkit-transition:opacity 1s,font-size 1s;
+-moz-transition:opacity 1s,font-size 1s;
+-o-transition:opacity 1s,font-size 1s;
+}
+/*End of derived code*/
 </style>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="jquery.min.js"><\/script>')</script>
 <script>
 var imgs=[
 	["moo.jpg",1,"this is a cow","cow1"],
@@ -27,24 +75,55 @@ var imgs=[
 	["moo4.jpg",1000,"biggest cow","cow4"]
 ];
 function moveToMagnLevel(m){
-	$("#magnitude-wrap img").each(function(){
+	$("#magnitude-wrap .imgwrap").each(function(){
 		var valFactor=parseInt($(this).attr("magn"))/m * 4/5;//4/5 indicates how much of the width/height it takes up.
 		$(this).css({
 			width:wrapWidth*valFactor,
 			height:wrapHeight*valFactor,
 			left:wrapWidth*(1-valFactor)/2,
 			top:wrapHeight*(1-valFactor)/2,
-			opacity:m/parseInt($(this).attr("magn"))
+			opacity:2*m/parseInt($(this).attr("magn"))
 		});
+		
+		if(m==parseInt($(this).attr("magn")))$(this).children(".transbox").css({opacity:0.7,height:"3.5em"}).siblings(".caption").css({"font-size":"12pt",opacity:1});
+		else $(this).children(".transbox").css({opacity:0,height:0}).siblings(".caption").css({"font-size":"1pt",opacity:0});
 	});
 }
 
 $(function(){
 	window.wrapWidth=$("#magnitude-wrap").width();
 	window.wrapHeight=$("#magnitude-wrap").height();
-	for(n in imgs)$("#magnitude-wrap").append("<img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' magn='"+imgs[n][1]+"'/>");
-	$("#magnitude-wrap img").click(function(){moveToMagnLevel($(this).attr("magn"))})
+	for(n in imgs)$("#magnitude-wrap").append("<div class='imgwrap' magn='"+imgs[n][1]+"'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>");
+	$("#magnitude-wrap .imgwrap").click(function(){moveToMagnLevel($(this).attr("magn"))})
 		.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
 	moveToMagnLevel(1);
 });
+</script>
+
+
+<!--[if lte IE 9]><style type="text/css">#outdatedMessage{display:block;}</style><![endif]-->
+<script>
+/*Begin derived code: http://stackoverflow.com/questions/10212503/javascript-to-detect-an-old-internet-explorer-and-offer-to-download-newer-browse*/
+function detectCSSFeature(featurename){
+    var feature = false,
+    domPrefixes = ['Webkit','Moz','ms','O'],
+    elm = document.createElement('div');
+
+    featurename = featurename.toLowerCase();
+
+    if( elm.style[featurename] ) return true; 
+
+	featurename = featurename.charAt(0).toUpperCase() + featurename.substr(1);
+	for( var i = 0; i < domPrefixes.length; i++ )
+		if( elm.style[domPrefixes[i] + featurename ] !== undefined )
+			return true;
+	
+	return false;
+}
+/*End of derived code*/
+
+setTimeout(function(){
+if(!detectCSSFeature("transition"))document.getElementById("outdatedMessage").style.display="block";
+if(!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn"))document.getElementById("outdatedMessage").style.display="block";
+},1000);
 </script>

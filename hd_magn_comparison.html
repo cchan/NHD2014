@@ -1,0 +1,50 @@
+<h1>Magnitude Comparison</h1>
+<div id="magnitude-wrap">
+</div>
+<style>
+#magnitude-wrap{
+	position:absolute;width:1000px;height:500px;
+	overflow:hidden;
+	border:solid 1px #000000;
+}
+#magnitude-wrap img{
+	position:absolute;top:0px;left:0px;
+	transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
+	-webkit-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
+	-moz-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
+	-o-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+	border:solid 1px #000000;
+}
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+var imgs=[
+	["moo.jpg",1,"this is a cow","cow1"],
+	["moo2.jpg",10,"also a cow, but bigger","cow2"],
+	["moo3.jpg",100,"even bigger cow","cow3"],
+	["moo4.jpg",1000,"biggest cow","cow4"]
+];
+function moveToMagnLevel(m){
+	$("#magnitude-wrap img").each(function(){
+		var valFactor=parseInt($(this).attr("magn"))/m * 4/5;//4/5 indicates how much of the width/height it takes up.
+		$(this).css({
+			width:wrapWidth*valFactor,
+			height:wrapHeight*valFactor,
+			left:wrapWidth*(1-valFactor)/2,
+			top:wrapHeight*(1-valFactor)/2,
+			opacity:m/parseInt($(this).attr("magn"))
+		});
+	});
+}
+
+$(function(){
+	window.wrapWidth=$("#magnitude-wrap").width();
+	window.wrapHeight=$("#magnitude-wrap").height();
+	for(n in imgs)$("#magnitude-wrap").append("<img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' magn='"+imgs[n][1]+"'/>");
+	$("#magnitude-wrap img").click(function(){moveToMagnLevel($(this).attr("magn"))})
+		.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
+	moveToMagnLevel(1);
+});
+</script>

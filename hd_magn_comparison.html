@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+</head>
+<body>
 <h1>Magnitude Comparison</h1>
 <p><i>[click to zoom in or out]</i></p>
 <div>
@@ -7,36 +13,47 @@ Your browser is out of date. It may not properly display the following script.<b
 Update your browser: <a href="">Internet Explorer 10</a> (recommended: smoothest animation), <a href="">Google Chrome</a>, <a href="">Mozilla Firefox</a> 
 </div>
 </div>
-<div id="magnitude-wrap"></div>
+<div id="magnitude-wrap"><span class="loading">Loading...  </span></div>
 <style>
 #outdatedMessage{
-border-radius:5px;
-padding:10px;
-display:none;
-color:black;
-background-color:#FFFF88;
-border:solid 1px #999900;
+	border-radius:5px;
+	padding:10px;
+	display:none;
+	color:black;
+	background-color:#FFFF88;
+	border:solid 1px #999900;
 }
 #magnitude-wrap{
-border-radius:5px;
+	border-radius:5px;
 	position:absolute;width:800px;height:500px;
 	overflow:hidden;
 	border:solid 1px #000000;
 	background-color:#999999;
 }
+#magnitude-wrap .loading{
+	position:relative;
+	top:50%;
+	left:50%;
+	width:100px;margin-left:-50px;
+	height:20px;margin-top:-10px;
+	text-align:center;
+}
 .imgwrap{
-border-radius:5px;
+	border-radius:5px;
 	position:absolute;top:0px;left:0px;
-	transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
-	-webkit-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
-	-moz-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
-	-o-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s;
+	transition:width 2s,height 2s,left 2s,top 2s,opacity 3s,border-width 3s;
+	-webkit-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s,border-width 3s;
+	-moz-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s,border-width 3s;
+	-o-transition:width 2s,height 2s,left 2s,top 2s,opacity 3s,border-width 3s;
 	opacity:0.5;
 	filter:alpha(opacity=50);
-	border:solid 1px #000000;
+	border:solid 2px #000000;
+}
+.imgwrap:hover{/*IE is stupid and only does hover on anchors.*/
+	border-color:#FF0000;
 }
 .imgwrap img{
-border-radius:5px;
+	border-radius:5px;
 	width:100%;height:100%;
 }
 
@@ -51,66 +68,30 @@ background-color: #9999CC;
 opacity:0.7;  filter:alpha(opacity=70);
 position: absolute; bottom: 0; left: 0;
 width: 100%;
-height:3.5em;
+height:8em;
 
 position:absolute;bottom:0px;left:0px;
 
-transition:opacity 1s,height 1s;
--webkit-transition:opacity 1s,height 1s;
--moz-transition:opacity 1s,height 1s;
--o-transition:opacity 1s,height 1s;
-
-border-radius:0px 0px 5px 5px;
+transition:opacity 3s,height 3s;
+-webkit-transition:opacity 3s,height 3s;
+-moz-transition:opacity 3s,height 3s;
+-o-transition:opacity 3s,height 3s;
 }
 .imgwrap .caption {
 margin: 0; padding: 10px;
 color: black;
 position: absolute; bottom: 0; left: 0;
 
-transition:opacity 1s,font-size 1s;
--webkit-transition:opacity 1s,font-size 1s;
--moz-transition:opacity 1s,font-size 1s;
--o-transition:opacity 1s,font-size 1s;
+transition:opacity 1s,font-size 3s;
+-webkit-transition:opacity 1s,font-size 3s;
+-moz-transition:opacity 1s,font-size 3s;
+-o-transition:opacity 1s,font-size 3s;
 }
 /*End of derived code*/
 </style>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="jquery.min.js"><\/script>')</script>
-<script>
-var imgs=[
-	["moo.jpg",1,"this is a cow","cow1"],
-	["moo2.jpg",10,"also a cow, but bigger","cow2"],
-	["moo3.jpg",100,"even bigger cow","cow3"],
-	["moo4.jpg",1000,"biggest cow","cow4"]
-];
-function moveToMagnLevel(m){
-	$("#magnitude-wrap .imgwrap").each(function(){
-		var valFactor=parseInt($(this).attr("magn"))/m * 4/5;//4/5 indicates how much of the width/height it takes up.
-		$(this).css({
-			width:wrapWidth*valFactor,
-			height:wrapHeight*valFactor,
-			left:wrapWidth*(1-valFactor)/2,
-			top:wrapHeight*(1-valFactor)/2,
-			opacity:2*m/parseInt($(this).attr("magn"))
-		});
-		
-		if(m==parseInt($(this).attr("magn")))$(this).children(".transbox").css({opacity:0.7,height:"3.5em"}).siblings(".caption").css({"font-size":"12pt",opacity:1});
-		else $(this).children(".transbox").css({opacity:0,height:0}).siblings(".caption").css({"font-size":"1pt",opacity:0});
-	});
-}
-
-$(function(){
-	window.wrapWidth=$("#magnitude-wrap").width();
-	window.wrapHeight=$("#magnitude-wrap").height();
-	for(n in imgs)$("#magnitude-wrap").append("<div class='imgwrap' magn='"+imgs[n][1]+"'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>");
-	$("#magnitude-wrap .imgwrap").click(function(){moveToMagnLevel($(this).attr("magn"))})
-		.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
-	moveToMagnLevel(10);
-});
-</script>
-
-
 <!--[if lte IE 9]><style type="text/css">#outdatedMessage{display:block;}</style><![endif]-->
 <script>
 /*Begin derived code: http://stackoverflow.com/questions/10212503/javascript-to-detect-an-old-internet-explorer-and-offer-to-download-newer-browse*/
@@ -131,9 +112,59 @@ function detectCSSFeature(featurename){
 	return false;
 }
 /*End of derived code*/
-
-setTimeout(function(){
-if(!detectCSSFeature("transition"))document.getElementById("outdatedMessage").style.display="block";
-if(!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn"))document.getElementById("outdatedMessage").style.display="block";
-},1000);
 </script>
+<script>
+var imgs=[
+	["moo.jpg",1,"this is a cow","cow1"],
+	["moo2.jpg",10,"also a cow, but bigger","cow2"],
+	["moo3.jpg",100,"even bigger cow","cow3"],
+	["moo4.jpg",1000,"biggest cow","cow4"],
+];
+function moveToMagnLevel(m){
+	$("#magnitude-wrap .imgwrap").each(function(){
+		var valFactor=parseInt($(this).attr("magn"))/m * 4/5;//4/5 indicates how much of the width/height it takes up.
+		$(this).css({
+			width:wrapWidth*valFactor,
+			height:wrapHeight*valFactor,
+			left:wrapWidth*(1-valFactor)/2,
+			top:wrapHeight*(1-valFactor)/2,
+			opacity:2*m/parseInt($(this).attr("magn")),
+			"border-width":2*valFactor+1,
+		});
+		
+		if(m==parseInt($(this).attr("magn")))
+			$(this).children(".transbox").css({opacity:0.7,height:"8em"})
+				.siblings(".caption").css({"font-size":"12pt",opacity:1});
+		else
+			$(this).children(".transbox").css({opacity:0,height:0})
+				.siblings(".caption").css({"font-size":"1pt",opacity:0});
+	});
+}
+window.imgLoadingCounter=0;
+function imgsLoaded(){
+	if(++window.imgLoadingCounter==imgs.length){//Last image has loaded!
+		$("#magnitude-wrap .imgwrap").show();
+		$("#magnitude-wrap .loading").hide();
+		clearInterval(window.loadingInterval);
+	}
+}
+
+$(function(){
+	window.wrapWidth=$("#magnitude-wrap").width();
+	window.wrapHeight=$("#magnitude-wrap").height();
+	for(n in imgs)$("#magnitude-wrap").append("<div class='imgwrap' magn='"+imgs[n][1]+"' style='display:none;'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' onload='imgsLoaded();'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>");
+	
+	$("#magnitude-wrap .loading").text(".       ");
+	window.loadingInterval=setInterval(function(){
+		$("#magnitude-wrap .loading").text($("#magnitude-wrap .loading").text().replace("........",".       ").replace(". ",".."));
+	},500);
+	$("#magnitude-wrap .imgwrap").click(function(){moveToMagnLevel($(this).attr("magn"))})
+		.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
+	moveToMagnLevel(10);
+	
+	if(!detectCSSFeature("transition"))document.getElementById("outdatedMessage").style.display="block";
+	if(!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn"))document.getElementById("outdatedMessage").style.display="block";
+});
+</script>
+</body>
+</html>

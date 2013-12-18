@@ -7,13 +7,14 @@
 <h1>Magnitude Comparison</h1>
 <p><i>[click to zoom in or out]</i></p>
 <div>
-<noscript>Your browser doesn't have JavaScript turned on!</noscript>
+<noscript style="font-weight:bold;color:red;">Your browser doesn't have JavaScript turned on! This script won't work at all here.</noscript>
 <div id="outdatedMessage">
 Your browser is out of date. It may not properly display the following script.<br>
 Update your browser: <a href="">Internet Explorer 10</a> (recommended: smoothest animation), <a href="">Google Chrome</a>, <a href="">Mozilla Firefox</a> 
 </div>
 </div>
 <div id="magnitude-wrap"><span class="loading">Loading...  </span></div>
+<div id="scroll-bar"><div>&nbsp;</div></div>
 <style>
 #outdatedMessage{
 	border-radius:5px;
@@ -23,20 +24,28 @@ Update your browser: <a href="">Internet Explorer 10</a> (recommended: smoothest
 	background-color:#FFFF88;
 	border:solid 1px #999900;
 }
+#scroll-bar{
+	display:inline-block;
+	height:500px;width:20px;overflow-y:scroll;
+}
+#scroll-bar div{
+	height:50000px;
+}
 #magnitude-wrap{
+	display:inline-block;
 	border-radius:5px;
-	position:absolute;width:800px;height:500px;
+	position:relative;width:800px;height:500px;
 	overflow:hidden;
 	border:solid 1px #000000;
 	background-color:#999999;
 }
 #magnitude-wrap .loading{
+	font-weight:bold;
 	position:relative;
 	top:50%;
 	left:50%;
 	width:100px;margin-left:-50px;
 	height:20px;margin-top:-10px;
-	text-align:center;
 }
 .imgwrap{
 	border-radius:5px;
@@ -120,8 +129,25 @@ var imgs=[
 	["moo3.jpg",100,"even bigger cow","cow3"],
 	["moo4.jpg",1000,"biggest cow","cow4"],
 ];
+window.imgcount=0;
+function imgsLoaded(){
+	if(++window.imgcount==$(".imgwrap img").length){
+		if(!detectCSSFeature("transition")
+			||!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn")){
+			document.getElementById("outdatedMessage").style.display="block";
+			return;
+		}
+		
+		moveToMagnLevel(10);
+		$("#magnitude-wrap .imgwrap").show();
+		$("#magnitude-wrap .imgwrap").click(function(){moveToMagnLevel($(this).attr("magn"))})
+			.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
+	}
+}
 function moveToMagnLevel(m){
 	$("#magnitude-wrap .imgwrap").each(function(){
+		var wrapWidth=$("#magnitude-wrap").width();
+		var wrapHeight=$("#magnitude-wrap").height();
 		var valFactor=parseInt($(this).attr("magn"))/m * 4/5;//4/5 indicates how much of the width/height it takes up.
 		$(this).css({
 			width:wrapWidth*valFactor,
@@ -139,31 +165,27 @@ function moveToMagnLevel(m){
 			$(this).children(".transbox").css({opacity:0,height:0})
 				.siblings(".caption").css({"font-size":"1pt",opacity:0});
 	});
-}
-window.imgLoadingCounter=0;
-function imgsLoaded(){
-	if(++window.imgLoadingCounter==imgs.length){//Last image has loaded!
-		$("#magnitude-wrap .imgwrap").show();
-		$("#magnitude-wrap .loading").hide();
-		clearInterval(window.loadingInterval);
-	}
+	$("scroll-bar").animate({scrollTop:50000*Math.log(m)/Math.log(1000)});
 }
 
 $(function(){
-	window.wrapWidth=$("#magnitude-wrap").width();
-	window.wrapHeight=$("#magnitude-wrap").height();
-	for(n in imgs)$("#magnitude-wrap").append("<div class='imgwrap' magn='"+imgs[n][1]+"' style='display:none;'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' onload='imgsLoaded();'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>");
+	setInterval(function(){
+		var r=$("#magnitude-wrap .loading");
+		r.text(r.text()
+			.replace("/",". ")
+			.replace("|","/")
+			.replace("\\","|")
+			.replace("-","\\")
+			.replace(". ",".-")
+			.replace(".........","."));
+	},50);
 	
-	$("#magnitude-wrap .loading").text(".       ");
-	window.loadingInterval=setInterval(function(){
-		$("#magnitude-wrap .loading").text($("#magnitude-wrap .loading").text().replace("........",".       ").replace(". ",".."));
-	},500);
-	$("#magnitude-wrap .imgwrap").click(function(){moveToMagnLevel($(this).attr("magn"))})
-		.each(function(){$(this).css({"z-index":1000/parseInt($(this).attr("magn"))});});
-	moveToMagnLevel(10);
-	
-	if(!detectCSSFeature("transition"))document.getElementById("outdatedMessage").style.display="block";
-	if(!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn"))document.getElementById("outdatedMessage").style.display="block";
+	window.imgstr="";
+	for(n in imgs)
+		window.imgstr+="<div class='imgwrap' magn='"+imgs[n][1]+"' style='display:none;'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' onload='imgsLoaded();'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>";
+	setTimeout(function(){
+		$("#magnitude-wrap").append(window.imgstr);
+	},2000);
 });
 </script>
 </body>

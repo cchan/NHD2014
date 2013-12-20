@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title></title>
-</head>
-<body>
+<script>
+var imgs=[
+	["moo.jpg",1,"this is a cow","cow1"],
+	["moo2.jpg",10,"also a cow, but bigger","cow2"],
+	["moo3.jpg",100,"even bigger cow","cow3"],
+	["moo4.jpg",1000,"biggest cow","cow4"],
+];
+</script>
 <h1>Magnitude Comparison</h1>
 <p><i>[click to zoom in or out]</i></p>
 <div>
@@ -99,8 +101,6 @@ transition:opacity 1s,font-size 3s;
 /*End of derived code*/
 </style>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="jquery.min.js"><\/script>')</script>
 <!--[if lte IE 9]><style type="text/css">#outdatedMessage{display:block;}</style><![endif]-->
 <script>
 /*Begin derived code: http://stackoverflow.com/questions/10212503/javascript-to-detect-an-old-internet-explorer-and-offer-to-download-newer-browse*/
@@ -123,20 +123,15 @@ function detectCSSFeature(featurename){
 /*End of derived code*/
 </script>
 <script>
-var imgs=[
-	["moo.jpg",1,"this is a cow","cow1"],
-	["moo2.jpg",10,"also a cow, but bigger","cow2"],
-	["moo3.jpg",100,"even bigger cow","cow3"],
-	["moo4.jpg",1000,"biggest cow","cow4"],
-];
 window.imgcount=0;
 function imgsLoaded(){
 	if(++window.imgcount==$(".imgwrap img").length){
 		if(!detectCSSFeature("transition")
-			||!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn")){
-			document.getElementById("outdatedMessage").style.display="block";
-			return;
-		}
+			||!document.getElementById("magnitude-wrap").getElementsByClassName("imgwrap")[0].getAttribute("magn")
+			||!window.jQuery){
+				document.getElementById("outdatedMessage").style.display="block";
+				return;
+			}
 		
 		moveToMagnLevel(10);
 		$("#magnitude-wrap .imgwrap").show();
@@ -182,11 +177,9 @@ $(function(){
 	
 	window.imgstr="";
 	for(n in imgs)
-		window.imgstr+="<div class='imgwrap' magn='"+imgs[n][1]+"' style='display:none;'><img src='"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' onload='imgsLoaded();'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>";
+		window.imgstr+="<div class='imgwrap' magn='"+imgs[n][1]+"' style='display:none;'><img src='/files/theme/"+imgs[n][0]+"' alt='"+imgs[n][2]+"' title='"+imgs[n][3]+"' onload='imgsLoaded();'/><div class='transbox'></div><div class='caption'><b>"+imgs[n][3]+"</b> "+imgs[n][2]+"</div></div>";
 	setTimeout(function(){
 		$("#magnitude-wrap").append(window.imgstr);
 	},2000);
 });
 </script>
-</body>
-</html>
